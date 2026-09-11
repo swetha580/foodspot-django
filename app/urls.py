@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from app.views import home, signup
+from app.views import home, signup, restaurant_list
 from app.forms import StyledAuthenticationForm, StyledPasswordResetForm, StyledSetPasswordForm
 
 urlpatterns = [
@@ -27,4 +27,5 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
         template_name='app/password_reset_complete.html'
     ), name='password_reset_complete'),
+    path('restaurants/', restaurant_list, name='restaurant_list'),
 ]
