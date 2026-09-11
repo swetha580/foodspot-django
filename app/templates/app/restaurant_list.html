@@ -6,7 +6,7 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for restaurant in page_obj %}
     <div class="border border-gray-200 rounded shadow p-4">
-        <h2 class="text-lg font-semibold">{{ restaurant.name }}</h2>
+        <h2 class="text-lg font-semibold"><a href="{% url 'restaurant_detail' restaurant.pk %}" class="hover:text-blue-600">{{ restaurant.name }}</a></h2>
         <p class="text-sm text-gray-600">{{ restaurant.city }}</p>
         <p class="text-sm text-gray-600">Cost for two: ₹{{ restaurant.cost_for_two }}</p>
         <p class="text-sm text-gray-600">Rating: {{ restaurant.average_rating }}</p>
