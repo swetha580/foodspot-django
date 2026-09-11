@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from app.views import home, SignUpView, RestaurantListView
+from app.views import home, SignUpView, RestaurantListView, RestaurantDetailView
+
 urlpatterns = [
     path('home/', home, name='home'),
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -23,4 +24,5 @@ urlpatterns = [
         template_name='app/password_reset_complete.html'
     ), name='password_reset_complete'),
     path('restaurants/', RestaurantListView.as_view(), name='restaurant_list'),
+    path('restaurants/<int:pk>/', RestaurantDetailView.as_view(), name='restaurant_detail'),
 ]
