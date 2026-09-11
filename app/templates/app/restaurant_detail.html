@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 mb-8 text-white overflow-hidden">
+        <div class="relative z-10">
+            <div class="flex justify-between items-start flex-wrap gap-4">
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tight">{{ restaurant.name }}</h1>
+                    <p class="text-blue-100 mt-2">{{ restaurant.address }}, {{ restaurant.city }}</p>
+                </div>
+                <span class="px-4 py-1.5 rounded-full text-sm font-semibold {% if restaurant.is_open %}bg-green-400 text-green-900{% else %}bg-red-400 text-red-900{% endif %}">
+                    {% if restaurant.is_open %}Open Now{% else %}Closed{% endif %}
+                </span>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-5">
+                {% for cuisine in restaurant.cuisines.all %}
+                    <span class="bg-white/20 backdrop-blur text-white text-sm px-3 py-1 rounded-full">{{ cuisine.name }}</span>
+                {% endfor %}
+                <span class="bg-white/20 backdrop-blur text-white text-sm px-3 py-1 rounded-full">{{ restaurant.get_veg_type_display }}</span>
+            </div>
+        </div>
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full"></div>
+        <div class="absolute right-20 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="lg:col-span-2 space-y-8">
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                    <span>🍽️</span> Menu
+                </h3>
+                <div class="divide-y divide-gray-100">
+                    {% for item in restaurant.menu_items.all %}
+                    <div class="flex justify-between items-center py-3.5">
+                        <div class="flex items-center gap-3">
+                            <span class="w-4 h-4 border-2 {% if item.is_veg %}border-green-600{% else %}border-red-600{% endif %} rounded-sm flex items-center justify-center flex-shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full {% if item.is_veg %}bg-green-600{% else %}bg-red-600{% endif %}"></span>
+                            </span>
+                            <span class="text-gray-800 font-medium">{{ item.dish_name }}</span>
+                        </div>
+                        <span class="text-gray-900 font-semibold">₹{{ item.price }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-sm text-gray-400 py-4 text-center">No menu items added yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                    <span>📸</span> Photos
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {% for photo in restaurant.photos.all %}
+                    <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}" class="rounded-lg object-cover h-40 w-full shadow-sm hover:opacity-90 transition">
+                    {% empty %}
+                    <p class="text-sm text-gray-400 col-span-full text-center py-4">No photos uploaded yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-6 space-y-5">
+                <h3 class="text-lg font-bold text-gray-900">Details</h3>
+
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">🕐</span>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide">Timings</p>
+                        <p class="font-medium text-gray-800">{{ restaurant.timings }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">💰</span>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide">Cost for Two</p>
+                        <p class="font-medium text-gray-800">₹{{ restaurant.cost_for_two }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">⭐</span>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide">Rating</p>
+                        <p class="font-medium text-gray-800">{{ restaurant.average_rating }} / 5</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">📍</span>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wide">Address</p>
+                        <p class="font-medium text-gray-800">{{ restaurant.address }}, {{ restaurant.city }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
