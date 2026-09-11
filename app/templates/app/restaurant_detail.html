@@ -10,9 +10,19 @@
                     <h1 class="text-4xl font-extrabold tracking-tight">{{ restaurant.name }}</h1>
                     <p class="text-blue-100 mt-2">{{ restaurant.address }}, {{ restaurant.city }}</p>
                 </div>
-                <span class="px-4 py-1.5 rounded-full text-sm font-semibold {% if restaurant.is_open %}bg-green-400 text-green-900{% else %}bg-red-400 text-red-900{% endif %}">
-                    {% if restaurant.is_open %}Open Now{% else %}Closed{% endif %}
-                </span>
+                <div class="flex items-center gap-3">
+                    <span class="px-4 py-1.5 rounded-full text-sm font-semibold {% if restaurant.is_open %}bg-green-400 text-green-900{% else %}bg-red-400 text-red-900{% endif %}">
+                        {% if restaurant.is_open %}Open Now{% else %}Closed{% endif %}
+                    </span>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'toggle_bookmark' restaurant.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-1.5 rounded-full text-sm font-semibold {% if is_bookmarked %}bg-white text-blue-700{% else %}bg-white/20 text-white hover:bg-white/30{% endif %}">
+                            {% if is_bookmarked %}★ Bookmarked{% else %}☆ Bookmark{% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
             <div class="flex flex-wrap gap-2 mt-5">
                 {% for cuisine in restaurant.cuisines.all %}

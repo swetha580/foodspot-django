@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
-from app.models import Restaurant, Cuisine
+from app.models import Restaurant, Cuisine, Bookmark
 
 
 def restaurant_list(request):
@@ -72,4 +72,10 @@ def restaurant_list(request):
 
 def restaurant_detail(request, pk):
     restaurant = get_object_or_404(Restaurant, pk=pk)
-    return render(request, 'app/restaurant_detail.html', {'restaurant': restaurant})
+    is_bookmarked = False
+    if request.user.is_authenticated:
+        is_bookmarked = Bookmark.objects.filter(user=request.user, restaurant=restaurant).exists()
+    return render(request, 'app/restaurant_detail.html', {
+        'restaurant': restaurant,
+        'is_bookmarked': is_bookmarked,
+    })
