@@ -51,6 +51,8 @@ def restaurant_list(request):
     if 'page' in query_params:
         query_params.pop('page')
 
+    spotlight_restaurants = Restaurant.objects.filter(is_spotlight=True).order_by('name')
+
     context = {
         'page_obj': page_obj,
         'cities': cities,
@@ -63,6 +65,7 @@ def restaurant_list(request):
         'max_cost': max_cost or '',
         'selected_sort': sort or '',
         'query_string': query_params.urlencode(),
+        'spotlight_restaurants': spotlight_restaurants,
     }
     return render(request, 'app/restaurant_list.html', context)
 
