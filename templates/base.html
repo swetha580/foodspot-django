@@ -5,9 +5,25 @@
     <title>FoodSpot</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
-    {% block content %}
-    {% endblock %}
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+        <a href="{% url 'home' %}" class="text-xl font-bold text-blue-600">FoodSpot</a>
+        <div>
+            {% if user.is_authenticated %}
+                <span class="text-gray-700 mr-4">Hi, {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-blue-600 hover:underline mr-4">Login</a>
+                <a href="{% url 'signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+    <main class="p-6">
+        {% block content %}
+        {% endblock %}
+    </main>
 </body>
 </html>
-
