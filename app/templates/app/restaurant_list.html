@@ -3,6 +3,24 @@
 {% block content %}
 <h1 class="text-3xl font-bold mb-6">Restaurants</h1>
 
+{% if spotlight_restaurants %}
+<div class="mb-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <span>✨</span> Spotlight Restaurants
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for restaurant in spotlight_restaurants %}
+        <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg shadow-sm p-4">
+            <h3 class="text-lg font-semibold"><a href="{% url 'restaurant_detail' restaurant.pk %}" class="hover:text-blue-600">{{ restaurant.name }}</a></h3>
+            <p class="text-sm text-gray-600">{{ restaurant.city }}</p>
+            <p class="text-sm text-gray-600">Cost for two: ₹{{ restaurant.cost_for_two }}</p>
+            <p class="text-sm text-gray-600">Rating: {{ restaurant.average_rating }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <form method="get" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
     <select name="city" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
         <option value="">All Cities</option>
