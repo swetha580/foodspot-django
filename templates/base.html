@@ -7,7 +7,10 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
-        <a href="{% url 'home' %}" class="text-xl font-bold text-blue-600">FoodSpot</a>
+        <div class="flex items-center space-x-6">
+            <a href="{% url 'home' %}" class="text-xl font-bold text-blue-600">FoodSpot</a>
+            <a href="{% url 'restaurant_list' %}" class="text-gray-700 hover:text-blue-600">Restaurants</a>
+        </div>
         <div>
             {% if user.is_authenticated %}
                 <span class="text-gray-700 mr-4">Hi, {{ user.username }}</span>
