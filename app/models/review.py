@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.db import models
+from .base import TimestampedModel
 
-class Review(models.Model):
+
+class Review(TimestampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(
         'app.Restaurant', on_delete=models.CASCADE, related_name='reviews'
     )
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'restaurant')

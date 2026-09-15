@@ -1,3 +1,4 @@
+from .base import TimestampedModel
 from .restaurant import Restaurant
 from .cuisine import Cuisine
 from .menu import MenuItem
