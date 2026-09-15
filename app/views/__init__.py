@@ -1,2 +1,2 @@
 from .home_views import home
-from .auth_views import signup
+from .auth_views import SignUpView
