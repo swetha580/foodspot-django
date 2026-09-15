@@ -1,11 +1,9 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.views.generic import ListView
 from app.models import Restaurant
 
 
-def restaurant_list(request):
-    restaurants = Restaurant.objects.all().order_by('name')
-    paginator = Paginator(restaurants, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'app/restaurant_list.html', {'page_obj': page_obj})
+class RestaurantListView(ListView):
+    model = Restaurant
+    template_name = 'app/restaurant_list.html'
+    paginate_by = 9
+    queryset = Restaurant.objects.all().order_by('name')
