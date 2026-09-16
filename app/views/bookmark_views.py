@@ -1,13 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect
-from django.views import View
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import get_object_or_404
+from django.views.generic import RedirectView
 from app.models import Restaurant, Bookmark
 
 
-class ToggleBookmarkView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        restaurant = get_object_or_404(Restaurant, pk=pk)
-        bookmark, created = Bookmark.objects.get_or_create(user=request.user, restaurant=restaurant)
+class ToggleBookmarkView(LoginRequiredMixin, RedirectView):
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(['POST'])
+
+    def post(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_redirect_url(self, *args, **kwargs):
+        restaurant = get_object_or_404(Restaurant, pk=kwargs['pk'])
+        bookmark, created = Bookmark.objects.get_or_create(user=self.request.user, restaurant=restaurant)
         if not created:
             bookmark.delete()
-        return redirect(request.META.get('HTTP_REFERER', 'restaurant_list'))
+        return self.request.META.get('HTTP_REFERER', '/')
