@@ -22,6 +22,8 @@ class RestaurantListView(ListView):
         query_params.pop('page', None)
         context['query_string'] = query_params.urlencode()
 
+        context['spotlight_restaurants'] = Restaurant.objects.filter(is_spotlight=True).order_by('name')
+
         return context
 
 
