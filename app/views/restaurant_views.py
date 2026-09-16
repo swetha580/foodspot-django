@@ -17,6 +17,11 @@ class RestaurantListView(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         context['cuisines'] = Cuisine.objects.all().order_by('name')
+
+        query_params = self.request.GET.copy()
+        query_params.pop('page', None)
+        context['query_string'] = query_params.urlencode()
+
         return context
 
 

@@ -12,10 +12,20 @@ class RestaurantFilter(django_filters.FilterSet):
     )
     min_cost = django_filters.NumberFilter(field_name='cost_for_two', lookup_expr='gte')
     max_cost = django_filters.NumberFilter(field_name='cost_for_two', lookup_expr='lte')
+    sort = django_filters.OrderingFilter(
+        fields=(
+            ('average_rating', 'rating_high'),
+            ('cost_for_two', 'cost_high'),
+        ),
+        field_labels={
+            'average_rating': 'Rating',
+            'cost_for_two': 'Cost',
+        }
+    )
 
     class Meta:
         model = Restaurant
-        fields = ['city', 'cuisine', 'veg_type', 'is_open', 'min_cost', 'max_cost']
+        fields = ['city', 'cuisine', 'veg_type', 'is_open', 'min_cost', 'max_cost', 'sort']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
