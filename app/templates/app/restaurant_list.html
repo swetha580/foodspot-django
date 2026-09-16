@@ -3,6 +3,45 @@
 {% block content %}
 <h1 class="text-3xl font-bold mb-6">Restaurants</h1>
 
+<form method="get" class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <select name="city" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+        <option value="">All Cities</option>
+        {% for value, label in filterset.filters.city.field.choices %}
+        {% if value %}
+        <option value="{{ value }}" {% if value == filterset.form.city.value %}selected{% endif %}>{{ label }}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+
+    <select name="cuisine" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+        <option value="">All Cuisines</option>
+        {% for cuisine in cuisines %}
+        <option value="{{ cuisine.id }}" {% if cuisine.id|stringformat:"s" == filterset.form.cuisine.value %}selected{% endif %}>{{ cuisine.name }}</option>
+        {% endfor %}
+    </select>
+
+    <select name="veg_type" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+        <option value="">All Types</option>
+        <option value="veg" {% if filterset.form.veg_type.value == "veg" %}selected{% endif %}>Veg</option>
+        <option value="non_veg" {% if filterset.form.veg_type.value == "non_veg" %}selected{% endif %}>Non-Veg</option>
+        <option value="vegan" {% if filterset.form.veg_type.value == "vegan" %}selected{% endif %}>Vegan</option>
+    </select>
+
+    <select name="is_open" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+        <option value="">Open/Closed</option>
+        <option value="open" {% if filterset.form.is_open.value == "open" %}selected{% endif %}>Open</option>
+        <option value="closed" {% if filterset.form.is_open.value == "closed" %}selected{% endif %}>Closed</option>
+    </select>
+
+    <input type="number" name="min_cost" value="{{ filterset.form.min_cost.value|default_if_none:'' }}" placeholder="Min Cost" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+    <input type="number" name="max_cost" value="{{ filterset.form.max_cost.value|default_if_none:'' }}" placeholder="Max Cost" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
+
+    <div class="col-span-2 sm:col-span-3 lg:col-span-6 flex gap-2 mt-1">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-1.5 rounded">Apply Filters</button>
+        <a href="{% url 'restaurant_list' %}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-4 py-1.5 rounded">Clear</a>
+    </div>
+</form>
+
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for restaurant in page_obj %}
     <div class="border border-gray-200 rounded shadow p-4">
