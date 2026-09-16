@@ -38,10 +38,10 @@
 
     <select name="sort" class="border border-gray-300 rounded px-2 py-1.5 text-sm">
         <option value="">Sort By</option>
-        <option value="rating_high" {% if selected_sort == "rating_high" %}selected{% endif %}>Rating: High to Low</option>
-        <option value="rating_low" {% if selected_sort == "rating_low" %}selected{% endif %}>Rating: Low to High</option>
-        <option value="cost_high" {% if selected_sort == "cost_high" %}selected{% endif %}>Cost: High to Low</option>
-        <option value="cost_low" {% if selected_sort == "cost_low" %}selected{% endif %}>Cost: Low to High</option>
+        <option value="-rating_high" {% if filterset.form.sort.value == "-rating_high" %}selected{% endif %}>Rating: High to Low</option>
+        <option value="rating_high" {% if filterset.form.sort.value == "rating_high" %}selected{% endif %}>Rating: Low to High</option>
+        <option value="-cost_high" {% if filterset.form.sort.value == "-cost_high" %}selected{% endif %}>Cost: High to Low</option>
+        <option value="cost_high" {% if filterset.form.sort.value == "cost_high" %}selected{% endif %}>Cost: Low to High</option>
     </select>
 
     <div class="col-span-2 sm:col-span-3 lg:col-span-7 flex gap-2 mt-1">
