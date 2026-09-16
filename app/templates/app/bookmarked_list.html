@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">My Bookmarked Restaurants</h1>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for bookmark in bookmarks %}
+    <div class="border border-gray-200 rounded shadow p-4">
+        <h2 class="text-lg font-semibold">
+            <a href="{% url 'restaurant_detail' bookmark.restaurant.pk %}" class="hover:text-blue-600">{{ bookmark.restaurant.name }}</a>
+        </h2>
+        <p class="text-sm text-gray-600">{{ bookmark.restaurant.city }}</p>
+        <p class="text-sm text-gray-600">Cost for two: ₹{{ bookmark.restaurant.cost_for_two }}</p>
+        <p class="text-sm text-gray-600">Rating: {{ bookmark.restaurant.average_rating }}</p>
+    </div>
+    {% empty %}
+    <p class="text-gray-500">You haven't bookmarked any restaurants yet.</p>
+    {% endfor %}
+</div>
+
+<div class="flex justify-center mt-8 space-x-2">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded text-sm">Previous</a>
+    {% endif %}
+    {% if page_obj %}
+    <span class="px-3 py-1 text-sm">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% endif %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded text-sm">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

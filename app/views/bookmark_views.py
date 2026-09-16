@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, ListView
 from app.models import Restaurant, Bookmark
 
 
@@ -18,3 +18,13 @@ class ToggleBookmarkView(LoginRequiredMixin, RedirectView):
         if not created:
             bookmark.delete()
         return self.request.META.get('HTTP_REFERER', '/')
+
+
+class BookmarkedListView(LoginRequiredMixin, ListView):
+    model = Bookmark
+    template_name = 'app/bookmarked_list.html'
+    context_object_name = 'bookmarks'
+    paginate_by = 9
+
+    def get_queryset(self):
+        return Bookmark.objects.filter(user=self.request.user).select_related('restaurant').order_by('-created_at')

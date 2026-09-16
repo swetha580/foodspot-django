@@ -14,6 +14,7 @@
         <div>
             {% if user.is_authenticated %}
                 <span class="text-gray-700 mr-4">Hi, {{ user.username }}</span>
+                <a href="{% url 'bookmarked_list' %}" class="text-gray-700 hover:text-blue-600 mr-4">My Bookmarks</a>
                 <form method="post" action="{% url 'logout' %}" class="inline">
                     {% csrf_token %}
                     <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Logout</button>
