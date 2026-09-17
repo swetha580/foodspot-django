@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from app.views import home, SignUpView, RestaurantListView, RestaurantDetailView, ToggleBookmarkView, BookmarkedListView, ToggleVisitedView, VisitedListView
+from app.views import home, SignUpView, RestaurantListView, RestaurantDetailView, ToggleBookmarkView, BookmarkedListView, ToggleVisitedView, VisitedListView, SubmitReviewView
 
 urlpatterns = [
     path('home/', home, name='home'),
@@ -29,4 +29,5 @@ urlpatterns = [
     path('bookmarks/', BookmarkedListView.as_view(), name='bookmarked_list'),
     path('restaurants/<int:pk>/visited/', ToggleVisitedView.as_view(), name='toggle_visited'),
     path('visited/', VisitedListView.as_view(), name='visited_list'),
+    path('restaurants/<int:pk>/review/', SubmitReviewView.as_view(), name='submit_review'),
 ]
