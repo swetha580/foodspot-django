@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
@@ -28,13 +28,13 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.restaurant = self.restaurant
         response = super().form_valid(form)
-        self._update_average_rating()
+        self._update_average_rating(self.restaurant)
         return response
 
-    def _update_average_rating(self):
-        avg = self.restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        self.restaurant.average_rating = round(avg, 2)
-        self.restaurant.save(update_fields=['average_rating'])
+    def _update_average_rating(self, restaurant):
+        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+        restaurant.average_rating = round(avg, 2)
+        restaurant.save(update_fields=['average_rating'])
 
     def get_success_url(self):
         return reverse('restaurant_detail', kwargs={'pk': self.restaurant.pk})
