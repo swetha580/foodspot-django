@@ -82,6 +82,30 @@
                 </div>
             </div>
 
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
+                    <span>⭐</span> Reviews
+                </h3>
+                <div class="divide-y divide-gray-100">
+                    {% for review in reviews %}
+                    <div class="py-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold text-gray-800">{{ review.user.username }}</span>
+                            <span class="text-yellow-500 text-lg">
+                                {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600">{{ review.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-sm text-gray-400 py-4 text-center">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
+                </div>
+                {% if review_count > 5 %}
+                <a href="{% url 'review_list' restaurant.pk %}" class="inline-block mt-4 text-sm text-blue-600 hover:underline">See all {{ review_count }} reviews &rarr;</a>
+                {% endif %}
+            </div>
+
         </div>
 
         <div class="lg:col-span-1">
