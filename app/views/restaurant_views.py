@@ -45,4 +45,6 @@ class RestaurantDetailView(DetailView):
             ).exists()
         context['is_bookmarked'] = is_bookmarked
         context['is_visited'] = is_visited
+        context['reviews'] = self.object.reviews.select_related('user').order_by('-created_at')[:5]
+        context['review_count'] = self.object.reviews.count()
         return context

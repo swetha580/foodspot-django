@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-1">Reviews for {{ restaurant.name }}</h1>
+    <p class="text-sm text-gray-500 mb-6">
+        <a href="{% url 'restaurant_detail' restaurant.pk %}" class="text-blue-600 hover:underline">&larr; Back to restaurant</a>
+    </p>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+        {% for review in reviews %}
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-1">
+                <span class="font-semibold text-gray-800">{{ review.user.username }}</span>
+                <span class="text-yellow-500 text-lg">
+                    {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                </span>
+            </div>
+            <p class="text-sm text-gray-600">{{ review.comment }}</p>
+        </div>
+        {% empty %}
+        <p class="text-sm text-gray-400 p-5 text-center">No reviews yet. Be the first to review!</p>
+        {% endfor %}
+    </div>
+
+    <div class="flex justify-center mt-8 space-x-2">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded text-sm">Previous</a>
+        {% endif %}
+        {% if page_obj %}
+        <span class="px-3 py-1 text-sm">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% endif %}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded text-sm">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

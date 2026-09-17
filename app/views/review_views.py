@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from app.forms import ReviewForm
 from app.models import Restaurant, Review
@@ -37,3 +38,22 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('restaurant_detail', kwargs={'pk': self.restaurant.pk})
+
+
+class ReviewListView(ListView):
+    model = Review
+    template_name = 'app/review_list.html'
+    context_object_name = 'reviews'
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        self.restaurant = get_object_or_404(Restaurant, pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Review.objects.filter(restaurant=self.restaurant).select_related('user').order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['restaurant'] = self.restaurant
+        return context
