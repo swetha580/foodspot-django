@@ -15,12 +15,18 @@
                         {% if restaurant.is_open %}Open Now{% else %}Closed{% endif %}
                     </span>
                     {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'toggle_bookmark' restaurant.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="px-4 py-1.5 rounded-full text-sm font-semibold {% if is_bookmarked %}bg-white text-blue-700{% else %}bg-white/20 text-white hover:bg-white/30{% endif %}">
-                            {% if is_bookmarked %}★ Bookmarked{% else %}☆ Bookmark{% endif %}
-                        </button>
-                    </form>
+                        <form method="post" action="{% url 'toggle_bookmark' restaurant.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="px-4 py-1.5 rounded-full text-sm font-semibold {% if is_bookmarked %}bg-white text-blue-700{% else %}bg-white/20 text-white hover:bg-white/30{% endif %}">
+                                {% if is_bookmarked %}★ Bookmarked{% else %}☆ Bookmark{% endif %}
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'toggle_visited' restaurant.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="px-4 py-1.5 rounded-full text-sm font-semibold {% if is_visited %}bg-white text-green-700{% else %}bg-white/20 text-white hover:bg-white/30{% endif %}">
+                                {% if is_visited %}✓ Visited{% else %}Mark Visited{% endif %}
+                            </button>
+                        </form>
                     {% endif %}
                 </div>
             </div>

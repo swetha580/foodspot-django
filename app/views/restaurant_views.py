@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView
-from app.models import Restaurant, Cuisine, Bookmark
+from app.models import Restaurant, Cuisine, Bookmark, Visited
 from app.filters import RestaurantFilter
 
 
@@ -35,9 +35,14 @@ class RestaurantDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         is_bookmarked = False
+        is_visited = False
         if self.request.user.is_authenticated:
             is_bookmarked = Bookmark.objects.filter(
                 user=self.request.user, restaurant=self.object
             ).exists()
+            is_visited = Visited.objects.filter(
+                user=self.request.user, restaurant=self.object
+            ).exists()
         context['is_bookmarked'] = is_bookmarked
+        context['is_visited'] = is_visited
         return context
