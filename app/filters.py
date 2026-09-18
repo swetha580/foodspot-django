@@ -3,6 +3,11 @@ from app.models import Restaurant, Cuisine
 
 
 class RestaurantFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(
+        field_name='name',
+        lookup_expr='icontains',
+        label='Search',
+    )
     city = django_filters.ChoiceFilter(choices=[])
     cuisine = django_filters.ModelChoiceFilter(queryset=Cuisine.objects.all().order_by('name'))
     veg_type = django_filters.ChoiceFilter(choices=Restaurant._meta.get_field('veg_type').choices)
