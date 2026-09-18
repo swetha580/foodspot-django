@@ -3,7 +3,7 @@ from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from app.forms import ReviewForm
 from app.models import Restaurant, Review
 
@@ -57,3 +57,54 @@ class ReviewListView(ListView):
         context = super().get_context_data(**kwargs)
         context['restaurant'] = self.restaurant
         return context
+
+class EditReviewView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'app/edit_review.html'
+
+    def test_func(self):
+        review = self.get_object()
+        return review.user == self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self._update_average_rating(self.object.restaurant)
+        return response
+
+    def _update_average_rating(self, restaurant):
+        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+        restaurant.average_rating = round(avg, 2)
+        restaurant.save(update_fields=['average_rating'])
+
+    def get_success_url(self):
+        return reverse(
+            'restaurant_detail',
+            kwargs={'pk': self.object.restaurant.pk}
+        )
+
+
+class DeleteReviewView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+    template_name = 'app/delete_review.html'
+
+    def test_func(self):
+        review = self.get_object()
+        return review.user == self.request.user
+
+    def form_valid(self, form):
+        restaurant = self.object.restaurant
+        response = super().form_valid(form)
+        self._update_average_rating(restaurant)
+        return response
+
+    def _update_average_rating(self, restaurant):
+        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+        restaurant.average_rating = round(avg, 2)
+        restaurant.save(update_fields=['average_rating'])
+
+    def get_success_url(self):
+        return reverse(
+            'restaurant_detail',
+            kwargs={'pk': self.object.restaurant.pk}
+        )
