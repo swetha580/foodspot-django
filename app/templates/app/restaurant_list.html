@@ -11,6 +11,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for restaurant in spotlight_restaurants %}
         <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg shadow-sm p-4">
+            {% with photo=restaurant.photos.first %}
+                {% if photo %}
+                <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}" class="rounded-lg object-cover h-32 w-full mb-3">
+                {% endif %}
+            {% endwith %}
             <h3 class="text-lg font-semibold"><a href="{% url 'restaurant_detail' restaurant.pk %}" class="hover:text-blue-600">{{ restaurant.name }}</a></h3>
             <p class="text-sm text-gray-600">{{ restaurant.city }}</p>
             <p class="text-sm text-gray-600">Cost for two: ₹{{ restaurant.cost_for_two }}</p>
@@ -73,6 +78,11 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for restaurant in page_obj %}
     <div class="border border-gray-200 rounded shadow p-4">
+        {% with photo=restaurant.photos.first %}
+            {% if photo %}
+            <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}" class="rounded-lg object-cover h-32 w-full mb-3">
+            {% endif %}
+        {% endwith %}
         <h2 class="text-lg font-semibold"><a href="{% url 'restaurant_detail' restaurant.pk %}" class="hover:text-blue-600">{{ restaurant.name }}</a></h2>
         <p class="text-sm text-gray-600">{{ restaurant.city }}</p>
         <p class="text-sm text-gray-600">Cost for two: ₹{{ restaurant.cost_for_two }}</p>
