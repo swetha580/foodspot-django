@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6 flex items-center gap-2">
+    <span>✨</span> Spotlight Restaurants
+</h1>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for restaurant in restaurants %}
+    <a href="{% url 'restaurant_detail' restaurant.pk %}" class="block bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg shadow-sm p-4 hover:shadow-md transition">
+        {% with photo=restaurant.photos.first %}
+            {% if photo %}
+            <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}" class="rounded-lg object-cover h-32 w-full mb-3">
+            {% endif %}
+        {% endwith %}
+        <h3 class="text-lg font-semibold">{{ restaurant.name }}</h3>
+        <p class="text-sm text-gray-600">{{ restaurant.city }}</p>
+        <p class="text-sm text-gray-600">Cost for two: ₹{{ restaurant.cost_for_two }}</p>
+        <p class="text-sm text-yellow-500">
+            {% for i in "12345" %}{% if forloop.counter <= restaurant.average_rating %}★{% else %}☆{% endif %}{% endfor %}
+        </p>
+    </a>
+    {% empty %}
+    <p class="text-gray-500">No spotlight restaurants right now.</p>
+    {% endfor %}
+</div>
+
+<div class="flex justify-center mt-8 space-x-2">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded text-sm">Previous</a>
+    {% endif %}
+    {% if page_obj %}
+    <span class="px-3 py-1 text-sm">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% endif %}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded text-sm">Next</a>
+    {% endif %}
+</div>
+{% endblock %}
