@@ -1,9 +1,8 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Avg
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from app.forms import ReviewForm
 from app.models import Restaurant, Review
 
@@ -28,13 +27,8 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.restaurant = self.restaurant
         response = super().form_valid(form)
-        self._update_average_rating()
+        self.restaurant.update_average_rating()
         return response
-
-    def _update_average_rating(self):
-        avg = self.restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        self.restaurant.average_rating = round(avg, 2)
-        self.restaurant.save(update_fields=['average_rating'])
 
     def get_success_url(self):
         return reverse('restaurant_detail', kwargs={'pk': self.restaurant.pk})
@@ -57,3 +51,39 @@ class ReviewListView(ListView):
         context = super().get_context_data(**kwargs)
         context['restaurant'] = self.restaurant
         return context
+
+
+class EditReviewView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'app/edit_review.html'
+
+    def test_func(self):
+        review = self.get_object()
+        return review.user == self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.restaurant.update_average_rating()
+        return response
+
+    def get_success_url(self):
+        return reverse('restaurant_detail', kwargs={'pk': self.object.restaurant.pk})
+
+
+class DeleteReviewView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Review
+
+    def test_func(self):
+        review = self.get_object()
+        return review.user == self.request.user
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        restaurant = self.object.restaurant
+        response = super().post(request, *args, **kwargs)
+        restaurant.update_average_rating()
+        return response
+
+    def get_success_url(self):
+        return reverse('restaurant_detail', kwargs={'pk': self.object.restaurant.pk})

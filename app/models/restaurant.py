@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Avg
+
 
 class Restaurant(models.Model):
     VEG_CHOICES = [
@@ -20,3 +22,8 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    def update_average_rating(self):
+        avg = self.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+        self.average_rating = round(avg, 2)
+        self.save(update_fields=['average_rating'])

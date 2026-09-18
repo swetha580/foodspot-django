@@ -88,14 +88,65 @@
                 </h3>
                 <div class="divide-y divide-gray-100">
                     {% for review in reviews %}
-                    <div class="py-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-semibold text-gray-800">{{ review.user.username }}</span>
-                            <span class="text-yellow-500 text-lg">
-                                {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
-                            </span>
+                    <div class="py-4" x-data="{ editing: false, confirmingDelete: false }">
+                        <div x-show="!editing">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-semibold text-gray-800">{{ review.user.username }}</span>
+                                <span class="text-yellow-500 text-lg">
+                                    {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600">{{ review.comment }}</p>
+                            {% if review.user == user %}
+                            <div class="flex items-center gap-3 mt-2">
+                                <button type="button" @click="editing = true" class="text-xs text-blue-600 hover:underline">Edit</button>
+                                <button type="button" @click="confirmingDelete = true" class="text-xs text-red-600 hover:underline">Delete</button>
+                            </div>
+                            {% endif %}
                         </div>
-                        <p class="text-sm text-gray-600">{{ review.comment }}</p>
+
+                        {% if review.user == user %}
+                        <div x-show="editing" x-cloak class="mt-2">
+                            <form method="post" action="{% url 'edit_review' review.pk %}" class="space-y-2">
+                                {% csrf_token %}
+                                <div x-data="{ editRating: {{ review.rating }} }">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Rating</label>
+                                    <div class="flex gap-1 text-2xl mb-1">
+                                        <template x-for="i in [1,2,3,4,5]" :key="i">
+                                            <button type="button" @click="editRating = i" x-text="i <= editRating ? '★' : '☆'"
+                                                    class="text-yellow-500 hover:scale-110 transition leading-none"></button>
+                                        </template>
+                                    </div>
+                                    <input type="hidden" name="rating" :value="editRating">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Comment</label>
+                                    <textarea name="comment" rows="3"
+                                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ review.comment }}</textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded">Save</button>
+                                    <button type="button" @click="editing = false" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div x-show="confirmingDelete" x-cloak
+                            class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+                            @click.self="confirmingDelete = false">
+                            <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full mx-4">
+                                <h4 class="text-lg font-bold text-gray-900 mb-2">Delete this review?</h4>
+                                <p class="text-sm text-gray-600 mb-5">This action cannot be undone.</p>
+                                <div class="flex justify-end gap-3">
+                                    <button type="button" @click="confirmingDelete = false" class="text-sm px-4 py-1.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700">Cancel</button>
+                                    <form method="post" action="{% url 'delete_review' review.pk %}" class="m-0 p-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-sm px-4 py-1.5 rounded bg-red-500 hover:bg-red-600 text-white">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     {% empty %}
                     <p class="text-sm text-gray-400 py-4 text-center">No reviews yet. Be the first to review!</p>
