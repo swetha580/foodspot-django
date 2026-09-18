@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import ListView
@@ -28,13 +27,8 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.restaurant = self.restaurant
         response = super().form_valid(form)
-        self._update_average_rating(self.restaurant)
+        self.restaurant.update_average_rating()
         return response
-
-    def _update_average_rating(self, restaurant):
-        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        restaurant.average_rating = round(avg, 2)
-        restaurant.save(update_fields=['average_rating'])
 
     def get_success_url(self):
         return reverse('restaurant_detail', kwargs={'pk': self.restaurant.pk})
@@ -58,6 +52,7 @@ class ReviewListView(ListView):
         context['restaurant'] = self.restaurant
         return context
 
+
 class EditReviewView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Review
     form_class = ReviewForm
@@ -69,42 +64,26 @@ class EditReviewView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        self._update_average_rating(self.object.restaurant)
+        self.object.restaurant.update_average_rating()
         return response
 
-    def _update_average_rating(self, restaurant):
-        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        restaurant.average_rating = round(avg, 2)
-        restaurant.save(update_fields=['average_rating'])
-
     def get_success_url(self):
-        return reverse(
-            'restaurant_detail',
-            kwargs={'pk': self.object.restaurant.pk}
-        )
+        return reverse('restaurant_detail', kwargs={'pk': self.object.restaurant.pk})
 
 
 class DeleteReviewView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Review
-    template_name = 'app/delete_review.html'
 
     def test_func(self):
         review = self.get_object()
         return review.user == self.request.user
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         restaurant = self.object.restaurant
-        response = super().form_valid(form)
-        self._update_average_rating(restaurant)
+        response = super().post(request, *args, **kwargs)
+        restaurant.update_average_rating()
         return response
 
-    def _update_average_rating(self, restaurant):
-        avg = restaurant.reviews.aggregate(Avg('rating'))['rating__avg'] or 0
-        restaurant.average_rating = round(avg, 2)
-        restaurant.save(update_fields=['average_rating'])
-
     def get_success_url(self):
-        return reverse(
-            'restaurant_detail',
-            kwargs={'pk': self.object.restaurant.pk}
-        )
+        return reverse('restaurant_detail', kwargs={'pk': self.object.restaurant.pk})
