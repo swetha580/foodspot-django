@@ -73,12 +73,26 @@
                 <h3 class="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
                     <span>📸</span> Photos
                 </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {% for photo in restaurant.photos.all %}
-                    <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}" class="rounded-lg object-cover h-40 w-full shadow-sm hover:opacity-90 transition">
-                    {% empty %}
-                    <p class="text-sm text-gray-400 col-span-full text-center py-4">No photos uploaded yet.</p>
-                    {% endfor %}
+                <div x-data="{ open: false, current: 0, images: [{% for photo in restaurant.photos.all %}'{{ photo.image.url }}'{% if not forloop.last %},{% endif %}{% endfor %}] }">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {% for photo in restaurant.photos.all %}
+                        <img src="{{ photo.image.url }}" alt="{{ restaurant.name }}"
+                            @click="open = true; current = {{ forloop.counter0 }}"
+                            class="rounded-lg object-cover h-40 w-full shadow-sm hover:opacity-90 transition cursor-pointer">
+                        {% empty %}
+                        <p class="text-sm text-gray-400 col-span-full text-center py-4">No photos uploaded yet.</p>
+                        {% endfor %}
+                    </div>
+
+                    <div x-show="open" x-cloak @keydown.escape.window="open = false"
+                        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" @click="open = false">
+                        <button type="button" @click.stop="current = (current - 1 + images.length) % images.length"
+                                class="absolute left-4 text-white text-4xl px-3">&larr;</button>
+                        <img :src="images[current]" @click.stop class="max-h-[80vh] max-w-[80vw] rounded shadow-lg">
+                        <button type="button" @click.stop="current = (current + 1) % images.length"
+                                class="absolute right-4 text-white text-4xl px-3">&rarr;</button>
+                        <button type="button" @click="open = false" class="absolute top-4 right-6 text-white text-3xl">&times;</button>
+                    </div>
                 </div>
             </div>
 
