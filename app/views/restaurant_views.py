@@ -22,9 +22,16 @@ class RestaurantListView(ListView):
         query_params.pop('page', None)
         context['query_string'] = query_params.urlencode()
 
-        context['spotlight_restaurants'] = Restaurant.objects.filter(is_spotlight=True).order_by('name')
-
         return context
+
+class SpotlightListView(ListView):
+    model = Restaurant
+    template_name = 'app/spotlight_list.html'
+    context_object_name = 'restaurants'
+    paginate_by = 9
+
+    def get_queryset(self):
+        return Restaurant.objects.filter(is_spotlight=True).order_by('name')
 
 
 class RestaurantDetailView(DetailView):
