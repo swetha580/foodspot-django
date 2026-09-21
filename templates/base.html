@@ -9,12 +9,12 @@
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-6">
-            <a href="{% url 'home' %}" class="text-xl font-bold text-blue-600">FoodSpot</a>
             <a href="{% url 'restaurant_list' %}" class="text-gray-700 hover:text-blue-600">Restaurants</a>
         </div>
         <div>
             {% if user.is_authenticated %}
                 <span class="text-gray-700 mr-4">Hi, {{ user.username }}</span>
+                <a href="{% url 'spotlight_list' %}" class="text-gray-700 hover:text-blue-600 mr-4">Spotlight</a>
                 <a href="{% url 'bookmarked_list' %}" class="text-gray-700 hover:text-blue-600 mr-4">My Bookmarks</a>
                 <a href="{% url 'visited_list' %}" class="text-gray-700 hover:text-blue-600 mr-4">My Visited</a>
                 <form method="post" action="{% url 'logout' %}" class="inline">
