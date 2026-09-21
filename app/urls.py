@@ -1,13 +1,12 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from app.views import home, SignUpView, RestaurantListView, RestaurantDetailView, ToggleBookmarkView, BookmarkedListView, ToggleVisitedView, VisitedListView, SubmitReviewView, ReviewListView,  EditReviewView, DeleteReviewView, SpotlightListView
+from app.views import SignUpView, RestaurantListView, RestaurantDetailView, ToggleBookmarkView, BookmarkedListView, ToggleVisitedView, VisitedListView, SubmitReviewView, ReviewListView,  EditReviewView, DeleteReviewView, SpotlightListView
 urlpatterns = [
-    path('home/', home, name='home'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', auth_views.LoginView.as_view(
         template_name='app/login.html'
     ), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='app/password_reset.html',
         email_template_name='app/password_reset_email.html',
@@ -32,5 +31,5 @@ urlpatterns = [
     path('restaurants/<int:pk>/reviews/', ReviewListView.as_view(), name='review_list'),
     path('reviews/<int:pk>/edit/', EditReviewView.as_view(), name='edit_review'),
     path('reviews/<int:pk>/delete/', DeleteReviewView.as_view(), name='delete_review'),
-        path('spotlight/', SpotlightListView.as_view(), name='spotlight_list'),
+    path('spotlight/', SpotlightListView.as_view(), name='spotlight_list'),
 ]
